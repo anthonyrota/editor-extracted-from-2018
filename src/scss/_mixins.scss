@@ -1,0 +1,23 @@
+@mixin small() {
+  @media screen and (max-width: 800px) {
+    @content;
+  }
+}
+
+@mixin mobile() {
+  // If you change the threshold (currently 600px)
+  // Then you have to change it in /src/scss/constants.js
+  // Under the name of exports.mobileDesktopThreshold
+  @media screen and (max-width: 600px) {
+    @content;
+  }
+}
+
+@mixin desktop() {
+  // If you change the threshold (currently 600px)
+  // Then you have to change it in /src/scss/constants.js
+  // Under the name of exports.mobileDesktopThreshold
+  @media screen and (min-width: 600px) {
+    @content;
+  }
+}
