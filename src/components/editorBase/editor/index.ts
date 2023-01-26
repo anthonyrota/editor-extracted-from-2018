@@ -1,13 +1,13 @@
-import { Disposable } from 'modules/disposable'
-import { Emitter } from '../emitter'
-import { SaveData, SaveDataType } from '../saveData'
-import { shouldMerge } from '../saveData/shouldMerge'
-import { DeepArrayLike, DeepArrayLikeNotValue } from '../utils/types'
-import { createValue, Value } from '../value'
-import { getCollapsedCursorInlineTextAttributes } from '../value/getCollapsedCursorInlineTextAttributes'
+import { Disposable } from "modules/disposable";
+import { Emitter } from "../emitter";
+import { SaveData, SaveDataType } from "../saveData";
+import { shouldMerge } from "../saveData/shouldMerge";
+import { DeepArrayLike, DeepArrayLikeNotValue } from "../utils/types";
+import { createValue, Value } from "../value";
+import { getCollapsedCursorInlineTextAttributes } from "../value/getCollapsedCursorInlineTextAttributes";
 
 export interface PluginArgumentMap {
-  [key: string]: [any[], any]
+  [key: string]: [any[], any];
 }
 
 export type PluginFunction<
@@ -27,7 +27,7 @@ export type PluginFunction<
   >,
   next: (...overides: Arguments[0] | []) => Arguments[1] | void,
   ...args: Arguments[0]
-) => Arguments[1] | void
+) => Arguments[1] | void;
 
 export type Plugin<
   ContentBlockAttributes,
@@ -43,8 +43,8 @@ export type Plugin<
     InlineVoidAttributes,
     ArgumentMap,
     ArgumentMap[K]
-  >
-}
+  >;
+};
 
 export class Editor<
   ContentBlockAttributes,
@@ -52,8 +52,9 @@ export class Editor<
   InlineTextAttributes,
   InlineVoidAttributes,
   ArgumentMap extends PluginArgumentMap = {}
-> implements Disposable {
-  private _disposed = false
+> implements Disposable
+{
+  private _disposed = false;
   private _revisions: Array<
     Value<
       ContentBlockAttributes,
@@ -61,20 +62,20 @@ export class Editor<
       InlineTextAttributes,
       InlineVoidAttributes
     >
-  >
-  private _revisionIndex = 0
-  private _focused = false
-  private _lastSaveData?: SaveData
-  private _collapsedCursorInlineTextAttributes: InlineTextAttributes
+  >;
+  private _revisionIndex = 0;
+  private _focused = false;
+  private _lastSaveData?: SaveData;
+  private _collapsedCursorInlineTextAttributes: InlineTextAttributes;
   private _edit: null | {
     value: null | Value<
       ContentBlockAttributes,
       VoidBlockAttributes,
       InlineTextAttributes,
       InlineVoidAttributes
-    >
-    saveData?: SaveData
-  } = null
+    >;
+    saveData?: SaveData;
+  } = null;
   private _middlewares: {
     [K in keyof ArgumentMap]?: Array<
       PluginFunction<
@@ -85,15 +86,15 @@ export class Editor<
         ArgumentMap,
         ArgumentMap[K]
       >
-    >
-  } = {}
-  private _onValueChange = new Emitter<void>()
-  private _onFocusChange = new Emitter<void>()
-  private _onCollapsedCursorInlineTextAttributesChange = new Emitter<void>()
-  public onValueChange = this._onValueChange.subscribe
-  public onFocusChange = this._onFocusChange.subscribe
-  public onCollapsedCursorInlineTextAttributesChange = this
-    ._onCollapsedCursorInlineTextAttributesChange.subscribe
+    >;
+  } = {};
+  private _onValueChange = new Emitter<void>();
+  private _onFocusChange = new Emitter<void>();
+  private _onCollapsedCursorInlineTextAttributesChange = new Emitter<void>();
+  public onValueChange = this._onValueChange.subscribe;
+  public onFocusChange = this._onFocusChange.subscribe;
+  public onCollapsedCursorInlineTextAttributesChange =
+    this._onCollapsedCursorInlineTextAttributesChange.subscribe;
 
   constructor(
     value: Value<
@@ -112,19 +113,18 @@ export class Editor<
       >
     >
   ) {
-    this._revisions = [value]
-    this._collapsedCursorInlineTextAttributes = getCollapsedCursorInlineTextAttributes(
-      value
-    )
+    this._revisions = [value];
+    this._collapsedCursorInlineTextAttributes =
+      getCollapsedCursorInlineTextAttributes(value);
 
-    this.addPlugin(plugins)
+    this.addPlugin(plugins);
   }
 
   public dispose(): void {
     if (!this._disposed) {
-      this._disposed = true
-      this._onValueChange.dispose()
-      this._onFocusChange.dispose()
+      this._disposed = true;
+      this._onValueChange.dispose();
+      this._onFocusChange.dispose();
     }
   }
 
@@ -136,15 +136,15 @@ export class Editor<
   > {
     return this._edit && this._edit.value
       ? this._edit.value
-      : this._revisions[this._revisionIndex]
+      : this._revisions[this._revisionIndex];
   }
 
   public get focused(): boolean {
-    return this._focused
+    return this._focused;
   }
 
   public get collapsedCursorInlineTextAttributes(): InlineTextAttributes {
-    return this._collapsedCursorInlineTextAttributes
+    return this._collapsedCursorInlineTextAttributes;
   }
 
   public set collapsedCursorInlineTextAttributes(
@@ -156,8 +156,8 @@ export class Editor<
         attributes
       )
     ) {
-      this._collapsedCursorInlineTextAttributes = attributes
-      this._onCollapsedCursorInlineTextAttributesChange.emit()
+      this._collapsedCursorInlineTextAttributes = attributes;
+      this._onCollapsedCursorInlineTextAttributesChange.emit();
     }
   }
 
@@ -173,44 +173,48 @@ export class Editor<
     >
   ): void {
     if (this._disposed) {
-      return
+      return;
     }
 
-    if (typeof plugin.length === 'number') {
+    if (typeof plugin.length === "number") {
       for (let i = 0; i < plugin.length; i++) {
         this.addPlugin(
-          (plugin as DeepArrayLikeNotValue<
-            Plugin<
-              ContentBlockAttributes,
-              VoidBlockAttributes,
-              InlineTextAttributes,
-              InlineVoidAttributes,
-              ArgumentMap
+          (
+            plugin as DeepArrayLikeNotValue<
+              Plugin<
+                ContentBlockAttributes,
+                VoidBlockAttributes,
+                InlineTextAttributes,
+                InlineVoidAttributes,
+                ArgumentMap
+              >
             >
-          >)[i]
-        )
+          )[i]
+        );
       }
-      return
+      return;
     }
 
-    Object.keys(plugin).forEach(key => {
-      const middleware = this._middlewares[key]
-      const func = (plugin as Plugin<
-        ContentBlockAttributes,
-        VoidBlockAttributes,
-        InlineTextAttributes,
-        InlineVoidAttributes,
-        ArgumentMap
-      >)[key]
+    Object.keys(plugin).forEach((key) => {
+      const middleware = this._middlewares[key];
+      const func = (
+        plugin as Plugin<
+          ContentBlockAttributes,
+          VoidBlockAttributes,
+          InlineTextAttributes,
+          InlineVoidAttributes,
+          ArgumentMap
+        >
+      )[key];
 
       if (func) {
         if (middleware) {
-          middleware.push(func)
+          middleware.push(func);
         } else {
-          this._middlewares[key] = [func]
+          this._middlewares[key] = [func];
         }
       }
-    })
+    });
   }
 
   public run<K extends keyof ArgumentMap>(
@@ -218,11 +222,11 @@ export class Editor<
     ...args: ArgumentMap[K][0]
   ): ArgumentMap[K][1] | void {
     if (this._disposed) {
-      return
+      return;
     }
 
     if (!(key in this._middlewares)) {
-      return
+      return;
     }
 
     const middleware: Array<
@@ -234,31 +238,31 @@ export class Editor<
         ArgumentMap,
         ArgumentMap[K]
       >
-    > = this._middlewares[key]!
+    > = this._middlewares[key]!;
 
     if (!middleware) {
-      return
+      return;
     }
 
-    let i = 0
+    let i = 0;
 
     const next = (
       ...overrides: ArgumentMap[K][0] | []
     ): ArgumentMap[K][1] | void => {
       if (i === middleware.length) {
-        return
+        return;
       }
 
-      const fn = middleware[i++]
+      const fn = middleware[i++];
 
       if (overrides.length) {
-        args = overrides
+        args = overrides;
       }
 
-      return fn(this, next, ...args)
-    }
+      return fn(this, next, ...args);
+    };
 
-    return next()
+    return next();
   }
 
   public save(
@@ -271,26 +275,25 @@ export class Editor<
     saveData?: SaveData
   ): void {
     if (this._disposed) {
-      return
+      return;
     }
 
     if (this._edit) {
-      this._edit.value = value
-      this._edit.saveData = saveData
-      this._collapsedCursorInlineTextAttributes = getCollapsedCursorInlineTextAttributes(
-        value
-      )
-      return
+      this._edit.value = value;
+      this._edit.saveData = saveData;
+      this._collapsedCursorInlineTextAttributes =
+        getCollapsedCursorInlineTextAttributes(value);
+      return;
     }
 
     const isSelectionChange =
-      saveData && saveData.type === SaveDataType.SetSelection
+      saveData && saveData.type === SaveDataType.SetSelection;
 
     if (
       this._revisionIndex < this._revisions.length - 1 &&
       !isSelectionChange
     ) {
-      this._revisions.splice(this._revisionIndex + 1)
+      this._revisions.splice(this._revisionIndex + 1);
     }
 
     if (isSelectionChange && this._revisions.length > 1) {
@@ -298,111 +301,111 @@ export class Editor<
         value.selection,
         value.document,
         this.value._originalSelection
-      )
+      );
     }
 
-    const lastSaveData = this._lastSaveData
+    const lastSaveData = this._lastSaveData;
 
     if (shouldMerge(lastSaveData, saveData)) {
-      this._revisions[this._revisionIndex] = value
+      this._revisions[this._revisionIndex] = value;
     } else {
       this._revisions[this._revisionIndex] = createValue(
         this.value.selection,
         this.value.document
-      )
-      this._revisionIndex++
-      this._revisions.push(value)
+      );
+      this._revisionIndex++;
+      this._revisions.push(value);
     }
 
-    this._lastSaveData = saveData
-    this._collapsedCursorInlineTextAttributes = getCollapsedCursorInlineTextAttributes(
-      value
-    )
-    this._onValueChange.emit()
+    this._lastSaveData = saveData;
+    this._collapsedCursorInlineTextAttributes =
+      getCollapsedCursorInlineTextAttributes(value);
+    this._onValueChange.emit();
   }
 
   public edit(change: () => SaveData | void): SaveData | void {
     if (this._disposed) {
-      return
+      return;
     }
 
     if (this._edit) {
-      const saveData = change()
+      const saveData = change();
       if (saveData && this._edit.value) {
-        this._edit.saveData = saveData
+        this._edit.saveData = saveData;
       }
-      return
+      return;
     }
 
-    this._edit = { value: null }
-    const saveData = change()
-    const edit = this._edit
-    this._edit = null
+    this._edit = { value: null };
+    const saveData = change();
+    const edit = this._edit;
+    this._edit = null;
 
     if (edit.value) {
-      this.save(edit.value, saveData || edit.saveData)
+      this.save(edit.value, saveData || edit.saveData);
     }
+
+    console.log(this.value);
+    window._value = this.value;
   }
 
   public undo(): void {
     if (this._disposed) {
-      return
+      return;
     }
 
     if (this._edit) {
-      throw new Error('Cannot undo while in an edit')
+      throw new Error("Cannot undo while in an edit");
     }
 
     if (this._revisionIndex > 0) {
-      this._revisionIndex--
-      this._restoreOriginalSelection()
-      this._lastSaveData = undefined
-      this._collapsedCursorInlineTextAttributes = getCollapsedCursorInlineTextAttributes(
-        this.value
-      )
-      this._onValueChange.emit()
+      this._revisionIndex--;
+      this._restoreOriginalSelection();
+      this._lastSaveData = undefined;
+      this._collapsedCursorInlineTextAttributes =
+        getCollapsedCursorInlineTextAttributes(this.value);
+      this._onValueChange.emit();
     }
   }
 
   public redo(): void {
     if (this._disposed) {
-      return
+      return;
     }
 
     if (this._edit) {
-      throw new Error('Cannot redo while in an edit')
+      throw new Error("Cannot redo while in an edit");
     }
 
     if (this._revisionIndex < this._revisions.length - 1) {
-      this._revisionIndex++
-      this._restoreOriginalSelection()
-      this._lastSaveData = undefined
-      this._collapsedCursorInlineTextAttributes = getCollapsedCursorInlineTextAttributes(
-        this.value
-      )
-      this._onValueChange.emit()
+      this._revisionIndex++;
+      this._restoreOriginalSelection();
+      this._lastSaveData = undefined;
+      this._collapsedCursorInlineTextAttributes =
+        getCollapsedCursorInlineTextAttributes(this.value);
+      this._onValueChange.emit();
     }
   }
 
   public focus(): void {
     if (this._disposed) {
-      return
+      return;
     }
 
     if (!this._focused) {
-      this._focused = true
-      this._onFocusChange.emit()
+      this._focused = true;
+      this._onFocusChange.emit();
     }
   }
 
   public blur(): void {
     if (this._disposed) {
-      return
+      return;
     }
 
     if (this._focused) {
-      this._focused = false
-      this._onFocusChange.emit()
+      this._focused = false;
+      this._onFocusChange.emit();
     }
   }
 
@@ -410,6 +413,6 @@ export class Editor<
     this._revisions[this._revisionIndex] = createValue(
       this.value._originalSelection,
       this.value.document
-    )
+    );
   }
 }

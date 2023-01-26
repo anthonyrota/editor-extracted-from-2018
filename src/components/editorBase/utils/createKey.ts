@@ -1,5 +1,5 @@
-import uuid from 'uuid/v4'
+import { v4 } from "uuid";
 
 export function createKey(): string {
-  return uuid()
+  return v4();
 }

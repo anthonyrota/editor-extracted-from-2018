@@ -1,34 +1,34 @@
-import { Editor } from '.'
-import { Direction } from '../direction'
-import { getDirectionToPoint } from '../direction/getDirectionToPoint'
-import { createDocument, Document } from '../document'
-import { DocumentMeta } from '../document/meta'
-import { Fragment } from '../fragment'
+import { Editor } from ".";
+import { Direction } from "../direction";
+import { getDirectionToPoint } from "../direction/getDirectionToPoint";
+import { createDocument, Document } from "../document";
+import { DocumentMeta } from "../document/meta";
+import { Fragment } from "../fragment";
 import {
   BlockNode,
   BlockNodeType,
   ContentBlockNode,
-  createContentBlockNode
-} from '../node'
-import { createContentOrEmptyBlockNode } from '../node/createContentOrEmptyBlockNode'
-import { getBlockNodeAtPoint } from '../node/getBlockNodeAtPoint'
-import { splitBlockNodeContentAtPointInDocument } from '../node/getBlockNodeContent'
-import { getContentAttributesAtPoint } from '../node/getContentAttributesAtPoint'
-import { getInlineTextAttributesAtPoint } from '../node/getInlineTextAttributesAtPoint'
-import { pushIntoContentList } from '../node/pushIntoContentList'
+  createContentBlockNode,
+} from "../node";
+import { createContentOrEmptyBlockNode } from "../node/createContentOrEmptyBlockNode";
+import { getBlockNodeAtPoint } from "../node/getBlockNodeAtPoint";
+import { splitBlockNodeContentAtPointInDocument } from "../node/getBlockNodeContent";
+import { getContentAttributesAtPoint } from "../node/getContentAttributesAtPoint";
+import { getInlineTextAttributesAtPoint } from "../node/getInlineTextAttributesAtPoint";
+import { pushIntoContentList } from "../node/pushIntoContentList";
 import {
   createPointAtEndOfLine,
   createPointInNonContentBlockNode,
   Point,
-  PointType
-} from '../point'
-import { arePointsEqual } from '../point/arePointsEqual'
-import { changePointBlockNodeIndex } from '../point/changePointBlockNodeIndex'
-import { Selection } from '../selection'
-import { isSelectionEmpty } from '../selection/isSelectionEmpty'
-import { mapSelectionPoints } from '../selection/mapSelectionPoints'
-import { createValue } from '../value'
-import { adjustPointAfterContentChange } from './adjustPointAfterContentChange'
+  PointType,
+} from "../point";
+import { arePointsEqual } from "../point/arePointsEqual";
+import { changePointBlockNodeIndex } from "../point/changePointBlockNodeIndex";
+import { Selection } from "../selection";
+import { isSelectionEmpty } from "../selection/isSelectionEmpty";
+import { mapSelectionPoints } from "../selection/mapSelectionPoints";
+import { createValue } from "../value";
+import { adjustPointAfterContentChange } from "./adjustPointAfterContentChange";
 
 export function insertFragmentAtPoint<
   ContentBlockAttributes,
@@ -50,13 +50,13 @@ export function insertFragmentAtPoint<
     InlineVoidAttributes
   >
 ): Point {
-  const { collapsedCursorInlineTextAttributes } = editor
-  const { document, selection } = editor.value
+  const { collapsedCursorInlineTextAttributes } = editor;
+  const { document, selection } = editor.value;
   const inlineAttributes = isSelectionCollapsedAtPoint(selection, point)
     ? collapsedCursorInlineTextAttributes
-    : getInlineTextAttributesAtPoint(document, point)
+    : getInlineTextAttributesAtPoint(document, point);
 
-  const blockNodesToInsert = fragment.blockNodes
+  const blockNodesToInsert = fragment.blockNodes;
   const replacementBlockNodes: Array<
     BlockNode<
       ContentBlockAttributes,
@@ -64,14 +64,14 @@ export function insertFragmentAtPoint<
       InlineTextAttributes,
       InlineVoidAttributes
     >
-  > = []
+  > = [];
 
-  const selectedBlockNode = getBlockNodeAtPoint(document, point)
-  const contentAttributes = getContentAttributesAtPoint(document, point)
+  const selectedBlockNode = getBlockNodeAtPoint(document, point);
+  const contentAttributes = getContentAttributesAtPoint(document, point);
   const [contentAtStart, contentAtEnd] = splitBlockNodeContentAtPointInDocument(
     document,
     point
-  )
+  );
 
   replacementBlockNodes.push(
     createContentOrEmptyBlockNode(
@@ -80,50 +80,50 @@ export function insertFragmentAtPoint<
       inlineAttributes,
       selectedBlockNode.key
     )
-  )
+  );
 
   mergeBlockNodeIntoList(
     replacementBlockNodes,
     blockNodesToInsert[0],
     document.meta
-  )
+  );
 
   for (let i = 1; i < blockNodesToInsert.length; i++) {
-    replacementBlockNodes.push(blockNodesToInsert[i])
+    replacementBlockNodes.push(blockNodesToInsert[i]);
   }
 
   const blockNodeWithContentAtEnd = createContentOrEmptyBlockNode(
     contentAtEnd,
     contentAttributes,
     inlineAttributes
-  )
+  );
 
   mergeBlockNodeIntoList(
     replacementBlockNodes,
     blockNodeWithContentAtEnd,
     document.meta
-  )
+  );
 
-  const newBlockNodes = document.blockNodes.slice()
-  newBlockNodes.splice(point.blockNodeIndex, 1, ...replacementBlockNodes)
+  const newBlockNodes = document.blockNodes.slice();
+  newBlockNodes.splice(point.blockNodeIndex, 1, ...replacementBlockNodes);
 
-  const newDocument = createDocument(newBlockNodes, document.meta)
+  const newDocument = createDocument(newBlockNodes, document.meta);
   const newSelection = adjustSelectionAfterInsertion(
     document,
     newDocument,
     point,
     replacementBlockNodes,
     selection
-  )
+  );
 
-  editor.save(createValue(newSelection, newDocument))
+  editor.save(createValue(newSelection, newDocument));
 
   return adjustPointAfterInsertion(
     document,
     point,
     replacementBlockNodes,
     point
-  )
+  );
 }
 
 function mergeContentBlockNodes<
@@ -147,10 +147,10 @@ function mergeContentBlockNodes<
   InlineTextAttributes,
   InlineVoidAttributes
 > {
-  const newContent = first.content.slice()
-  pushIntoContentList(newContent, second.content, meta)
+  const newContent = first.content.slice();
+  pushIntoContentList(newContent, second.content, meta);
 
-  return createContentBlockNode(newContent, first.attributes, first.key)
+  return createContentBlockNode(newContent, first.attributes, first.key);
 }
 
 function mergeBlockNodeIntoList<
@@ -175,25 +175,25 @@ function mergeBlockNodeIntoList<
   >,
   meta: DocumentMeta<unknown, unknown, InlineTextAttributes, unknown>
 ): void {
-  const lastBlockNodeInList = blockNodes[blockNodes.length - 1]
+  const lastBlockNodeInList = blockNodes[blockNodes.length - 1];
 
   if (blockNode.type === BlockNodeType.Empty) {
-    return
+    return;
   }
 
   if (
     lastBlockNodeInList.type === BlockNodeType.Void ||
     blockNode.type === BlockNodeType.Void
   ) {
-    blockNodes.push(blockNode)
+    blockNodes.push(blockNode);
   } else if (lastBlockNodeInList.type === BlockNodeType.Empty) {
-    blockNodes[blockNodes.length - 1] = blockNode
+    blockNodes[blockNodes.length - 1] = blockNode;
   } else {
     blockNodes[blockNodes.length - 1] = mergeContentBlockNodes(
       lastBlockNodeInList,
       blockNode,
       meta
-    )
+    );
   }
 }
 
@@ -201,7 +201,7 @@ function isSelectionCollapsedAtPoint(
   selection: Selection,
   point: Point
 ): boolean {
-  return isSelectionEmpty(selection) && arePointsEqual(selection.anchor, point)
+  return isSelectionEmpty(selection) && arePointsEqual(selection.anchor, point);
 }
 
 function adjustPointAfterInsertion(
@@ -212,30 +212,30 @@ function adjustPointAfterInsertion(
   >,
   point: Point
 ): Point {
-  const direction = getDirectionToPoint(insertionPoint, point)
+  const direction = getDirectionToPoint(insertionPoint, point);
 
   if (direction === Direction.Backward) {
-    return point
+    return point;
   }
 
-  const amountInserted = replacementBlockNodes.length - 1
-  const newBlockNodeIndex = point.blockNodeIndex + amountInserted
+  const amountInserted = replacementBlockNodes.length - 1;
+  const newBlockNodeIndex = point.blockNodeIndex + amountInserted;
 
   if (insertionPoint.blockNodeIndex !== point.blockNodeIndex) {
-    return changePointBlockNodeIndex(insertionPoint, newBlockNodeIndex)
+    return changePointBlockNodeIndex(insertionPoint, newBlockNodeIndex);
   }
 
-  const lastBlockNode = replacementBlockNodes[amountInserted]
+  const lastBlockNode = replacementBlockNodes[amountInserted];
 
   if (lastBlockNode.type !== BlockNodeType.Content) {
-    return createPointInNonContentBlockNode(newBlockNodeIndex)
+    return createPointInNonContentBlockNode(newBlockNodeIndex);
   }
 
   if (
     insertionPoint.type === PointType.InNonContentBlockNode ||
     point.type === PointType.InNonContentBlockNode
   ) {
-    return createPointAtEndOfLine(newBlockNodeIndex)
+    return createPointAtEndOfLine(newBlockNodeIndex);
   }
 
   return adjustPointAfterContentChange(
@@ -243,7 +243,7 @@ function adjustPointAfterInsertion(
     lastBlockNode.content,
     point,
     newBlockNodeIndex
-  )
+  );
 }
 
 function adjustSelectionAfterInsertion(
@@ -255,12 +255,12 @@ function adjustSelectionAfterInsertion(
   >,
   selection: Selection
 ): Selection {
-  return mapSelectionPoints(newDocument, selection, point =>
+  return mapSelectionPoints(newDocument, selection, (point) =>
     adjustPointAfterInsertion(
       oldDocument,
       insertionPoint,
       replacementBlockNodes,
       point
     )
-  )
+  );
 }

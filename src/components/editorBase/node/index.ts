@@ -1,15 +1,15 @@
-import { createKey } from '../utils/createKey'
+import { createKey } from "../utils/createKey";
 
 export enum InlineNodeType {
-  Text = 'text',
-  Void = 'void'
+  Text = "text",
+  Void = "void",
 }
 
 export interface InlineTextNode<Attributes> {
-  readonly type: InlineNodeType.Text
-  readonly key: string
-  readonly text: string
-  readonly attributes: Attributes
+  readonly type: InlineNodeType.Text;
+  readonly key: string;
+  readonly text: string;
+  readonly attributes: Attributes;
 }
 
 export function createInlineTextNode<Attributes>(
@@ -21,14 +21,14 @@ export function createInlineTextNode<Attributes>(
     text,
     attributes,
     key,
-    type: InlineNodeType.Text
-  }
+    type: InlineNodeType.Text,
+  };
 }
 
 export interface InlineVoidNode<Attributes> {
-  readonly type: InlineNodeType.Void
-  readonly key: string
-  readonly attributes: Attributes
+  readonly type: InlineNodeType.Void;
+  readonly key: string;
+  readonly attributes: Attributes;
 }
 
 export function createInlineVoidNode<Attributes>(
@@ -38,18 +38,18 @@ export function createInlineVoidNode<Attributes>(
   return {
     attributes,
     key,
-    type: InlineNodeType.Void
-  }
+    type: InlineNodeType.Void,
+  };
 }
 
 export type InlineNode<TextAttributes, VoidAttributes> =
   | InlineTextNode<TextAttributes>
-  | InlineVoidNode<VoidAttributes>
+  | InlineVoidNode<VoidAttributes>;
 
 export enum BlockNodeType {
-  Content = 'content',
-  Void = 'void',
-  Empty = 'empty'
+  Content = "content",
+  Void = "void",
+  Empty = "empty",
 }
 
 export interface ContentBlockNode<
@@ -57,12 +57,12 @@ export interface ContentBlockNode<
   InlineTextAttributes,
   InlineVoidAttributes
 > {
-  readonly type: BlockNodeType.Content
-  readonly key: string
+  readonly type: BlockNodeType.Content;
+  readonly key: string;
   readonly content: ReadonlyArray<
     InlineNode<InlineTextAttributes, InlineVoidAttributes>
-  >
-  readonly attributes: ContentBlockAttributes
+  >;
+  readonly attributes: ContentBlockAttributes;
 }
 
 export function createContentBlockNode<
@@ -82,22 +82,22 @@ export function createContentBlockNode<
 > {
   if (content.length === 0) {
     throw new Error(
-      'There must be at least one InlineNode in a ContentBlockNode'
-    )
+      "There must be at least one InlineNode in a ContentBlockNode"
+    );
   }
 
   return {
     content,
     attributes,
     key,
-    type: BlockNodeType.Content
-  }
+    type: BlockNodeType.Content,
+  };
 }
 
 export interface VoidBlockNode<Attributes> {
-  readonly type: BlockNodeType.Void
-  readonly key: string
-  readonly attributes: Attributes
+  readonly type: BlockNodeType.Void;
+  readonly key: string;
+  readonly attributes: Attributes;
 }
 
 export function createVoidBlockNode<Attributes>(
@@ -107,15 +107,15 @@ export function createVoidBlockNode<Attributes>(
   return {
     attributes,
     key,
-    type: BlockNodeType.Void
-  }
+    type: BlockNodeType.Void,
+  };
 }
 
 export interface EmptyBlockNode<ContentBlockAttributes, InlineTextAttributes> {
-  readonly type: BlockNodeType.Empty
-  readonly key: string
-  readonly attributes: ContentBlockAttributes
-  readonly inlineAttributes: InlineTextAttributes
+  readonly type: BlockNodeType.Empty;
+  readonly key: string;
+  readonly attributes: ContentBlockAttributes;
+  readonly inlineAttributes: InlineTextAttributes;
 }
 
 export function createEmptyBlockNode<
@@ -130,8 +130,8 @@ export function createEmptyBlockNode<
     attributes,
     inlineAttributes,
     key,
-    type: BlockNodeType.Empty
-  }
+    type: BlockNodeType.Empty,
+  };
 }
 
 export type BlockNode<
@@ -146,4 +146,4 @@ export type BlockNode<
       InlineVoidAttributes
     >
   | VoidBlockNode<VoidBlockAttributes>
-  | EmptyBlockNode<ContentBlockAttributes, InlineTextAttributes>
+  | EmptyBlockNode<ContentBlockAttributes, InlineTextAttributes>;

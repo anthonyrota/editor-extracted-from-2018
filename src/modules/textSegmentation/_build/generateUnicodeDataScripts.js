@@ -113,7 +113,7 @@ request(
             index === Object.keys(classes).length - 1 ? "" : ","
           }`
       ),
-      "}"
+      "}",
     ].join("\n");
 
     const getGraphemeBreakPropertyFileName = "getGraphemeBreakProperty";
@@ -145,8 +145,9 @@ request(
     
           if (codePoint < ${highStart}) {
             // Supplemental code point, use two-level lookup.
-            let index = data[${INDEX_1_OFFSET -
-              OMITTED_BMP_INDEX_1_LENGTH} + (codePoint >> ${SHIFT_1})];
+            let index = data[${
+              INDEX_1_OFFSET - OMITTED_BMP_INDEX_1_LENGTH
+            } + (codePoint >> ${SHIFT_1})];
             index = data[index + ((codePoint >> ${SHIFT_2}) & ${INDEX_2_MASK})];
             index = (index << ${INDEX_SHIFT}) + (codePoint & ${DATA_MASK});
             return data[index];
@@ -156,13 +157,13 @@ request(
         }
 
         const data = new Uint32Array([${unicodeData}])
-      `
+      `,
     ].join("\n");
 
     fs.writeFile(
       path.join(__dirname, `../${getGraphemeBreakPropertyFileName}.ts`),
       getGraphemeBreakPropertyCode,
-      error => {
+      (error) => {
         if (error) {
           throw error;
         }
@@ -197,7 +198,7 @@ request(
       trie.setRange(parseInt(start, 16), parseInt(end, 16), 1);
     }
 
-    console.log(JSON.stringify(ranges));
+    // console.log(JSON.stringify(ranges));
 
     const buffer = trie.toBuffer();
 
@@ -303,8 +304,9 @@ request(
   
         if (codePoint < ${highStart}) {
           // Supplemental code point, use two-level lookup.
-          let index = data[${INDEX_1_OFFSET -
-            OMITTED_BMP_INDEX_1_LENGTH} + (codePoint >> ${SHIFT_1})];
+          let index = data[${
+            INDEX_1_OFFSET - OMITTED_BMP_INDEX_1_LENGTH
+          } + (codePoint >> ${SHIFT_1})];
           index = data[index + ((codePoint >> ${SHIFT_2}) & ${INDEX_2_MASK})];
           index = (index << ${INDEX_SHIFT}) + (codePoint & ${DATA_MASK});
           return data[index];
@@ -319,7 +321,7 @@ request(
     fs.writeFile(
       path.join(__dirname, `../${isEmojiPresentationFileName}.ts`),
       isEmojiPresentationCode,
-      error => {
+      (error) => {
         if (error) {
           throw error;
         }
@@ -327,6 +329,3 @@ request(
     );
   }
 );
-
-// does something to disable some weird error
-export {};

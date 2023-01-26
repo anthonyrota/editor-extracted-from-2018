@@ -1,6 +1,6 @@
-@import '../../scss/mixins';
+@import "../../scss/mixins";
 
-$font: Georgia, Cambria, 'Times New Roman', Times, serif;
+$font: Georgia, Cambria, "Times New Roman", Times, serif;
 $font-weight-regular: 400;
 $font-weight-bold: 700;
 
@@ -89,10 +89,22 @@ $font-weight-bold: 700;
   }
 }
 
+.superscript {
+  position: relative;
+  top: -0.5em;
+  font-size: 80%;
+}
+
+.subscript {
+  position: relative;
+  top: 0.5em;
+  font-size: 80%;
+}
+
 .code {
   background: rgba(0, 0, 0, 0.05);
   margin: 0;
-  font-family: Menlo, Monaco, 'Courier New', Courier, monospace;
+  font-family: Menlo, Monaco, "Courier New", Courier, monospace;
   font-size: 16px;
   padding: 4px 0 4px 3px;
   margin-left: 2px;
@@ -139,7 +151,7 @@ $font-weight-bold: 700;
 
 .list::before {
   counter-increment: EditorContentListCounter;
-  content: counter(EditorContentListCounter) '. ';
+  content: counter(EditorContentListCounter) ". ";
 }
 
 .note + .note {
@@ -151,7 +163,7 @@ $font-weight-bold: 700;
 }
 
 .note::before {
-  content: '● ';
+  content: "● ";
 }
 
 .title {
@@ -195,7 +207,7 @@ $font-weight-bold: 700;
   margin: 0;
   margin-top: 0;
   padding-top: 20px;
-  font-family: Menlo, Monaco, 'Courier New', Courier, monospace;
+  font-family: Menlo, Monaco, "Courier New", Courier, monospace;
   font-size: 16px;
   background: rgba(0, 0, 0, 0.05);
   white-space: pre-wrap;
